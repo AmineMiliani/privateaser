@@ -145,7 +145,7 @@ const actors = [{
     'amount': 0
   }]
 }];
-
+/*
 function Step1(events,bars){
   for(var i = 0; i < events.lenght; i++)
   {
@@ -157,12 +157,60 @@ function Step1(events,bars){
         bar_index = j;
       }
     }
-    console.log(events[i].price);
     events[i].price = (events[i].persons * bars[bar_index].pricePerPerson)+ (events[i].time * bars[bar_index].pricePerHour);
   }
 }
+*/
+function BookingPrice(){
+  var barObj = ParseJsonArray(bars);
+  var eventObj = ParseJsonArray(events);
+  for(var i = 0 ; i<barObj.length;i++)
+  {
+    for(var j = 0; j < eventObj.length; j++){
+      if(eventObj[i].barId == barObj[j].id){
+        eventObj[i].price = eventObj[i].time * barObj[j].pricePerHour + eventObj[i].persons * barObj[j].pricePerPerson;
+      }
+    }
+  }
+  return eventObj;
+}
+function ParseJsonArray(array){
+    var objectArray = new Array();
+  for(var i = 0; i<array.length;i++)
+  {
+    objectArray[i] = JSON.parse(JSON.stringify(array[i]));
+  }
+  return objectArray;
+}
 
-Step1(events,bars);
-console.log(bars);
-console.log(events);
-console.log(actors);
+
+function Step2(){
+  var eventObj = BookingPrice();
+  for(var i = 0; i < eventObj.lenght; i++)
+  {
+    if(eventObj[i].persons > 10 && eventObj[i].persons <= 20)
+    {
+      eventObj[i].price = eventObj[i].price * 0.9
+    }
+    if(eventObj[i].persons > 20 && eventObj[i].persons <= 30)
+    {
+      eventObj[i].price = eventObj[i].price * 0.8;
+    }
+    if(eventObj[i].persons > 30)
+    {
+      eventObj[i].price = eventObj[i].price * 0.7;
+    }
+  }
+  return eventObj;
+}
+
+
+//const updatedArray = BookingPrice();
+const updatedArray = Step2();
+console.log(updatedArray);
+
+
+//Step1(events, bars);
+//console.log(bars);
+//console.log(events);
+//console.log(actors);
